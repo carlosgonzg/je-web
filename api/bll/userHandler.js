@@ -97,6 +97,10 @@ UserHandler.prototype.register = function(user){
 		if (result.length > 0) {
 			throw 'El usuario ya existe. Favor usar otro correo.';
 		}
+		user.status = {
+			_id: 2,
+			description: 'Inactivo'
+		};
 		return new _this.User(user).save();
 	})
 	.then(function(result){
@@ -105,7 +109,7 @@ UserHandler.prototype.register = function(user){
 	})
 	.then(function(token){
 		userx.confirmToken = token;
-		return userx.save();
+		return new _this.User(userx).save();
 	})
 	.then(function(result){
 		d.resolve({
@@ -119,6 +123,35 @@ UserHandler.prototype.register = function(user){
 		});
 	});
 	return d.promise;
+};
+
+UserHandler.prototype.confirm = function(token){
+	var _this = this;
+	var d = q.defer();
+	_this.User.find({ confirmToken: token })
+	.then(function(result){
+		if (result.length <= 0) {
+			throw 'El usuario no existe.';
+		}
+		var user = result[0];
+		user.status = {
+			_id: 1,
+			description: 'Activo'
+		};
+		return new _this.User(user).save();
+	})
+	.then(function(result){
+		d.resolve({
+			data : result
+		});
+	})
+	.catch (function (error) {
+		d.reject({
+			msg : error.toString(),
+			error: error
+		});
+	});
+	return d.promise;	
 };
 
 module.exports = UserHandler;

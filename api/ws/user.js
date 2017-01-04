@@ -34,4 +34,16 @@ module.exports = function (prefix, app, secret, mail) {
 			.then(util.success(res), util.error(res));
 		});
 	});
+	//confirm
+	app.get('/user/confirm/:token', function(req, res){
+		if(!req.params.token){
+			res.status(401).json({ msg: 'No esta autorizado para esta solicitud' });
+		}
+		else {
+			userHandler.confirm(req.params.token)
+			.then(function(result){
+				res.redirect('/#/login')
+			}, util.error(res));
+		}
+	});
 };

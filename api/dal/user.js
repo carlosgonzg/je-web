@@ -20,7 +20,8 @@ exports.schema = {
 	role : {
 		_id: { type: Number, required: true },
 		description: { type: String, required: true }
-	}
+	},
+	confirmToken: String
 };
 exports.validation = {
 	firstName: {
